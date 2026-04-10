@@ -38,7 +38,7 @@ async def generer_pdf_chrome(data: IncidentReport):
     
     try:
         # On attend que le formulaire soit chargé
-        await page.goto('http://127.0.0.1:8000', {'waitUntil': 'domcontentloaded', 'timeout': 60000})
+        await page.goto('http://localhost:10000', {'waitUntil': 'domcontentloaded', 'timeout': 60000})
         
         # Injection des données avec protection contre les caractères spéciaux
         # On transforme les données en JSON pour éviter les erreurs de "SyntaxError"
