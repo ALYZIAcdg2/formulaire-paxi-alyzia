@@ -26,14 +26,14 @@ async def generer_pdf_chrome(data: IncidentReport):
     nom_clean = data.nom_passager.replace(" ", "_").upper()
     fichier = f"QSE-FO-320_V02_{nom_clean}.pdf"
     
-    # Configuration pour le Cloud (Linux)
+    # On laisse Pyppeteer trouver le Chrome qu'il a téléchargé tout seul
     browser = await launch(
-        executablePath='/usr/bin/google-chrome-stable', # Chemin standard sur Render
-        args=['--no-sandbox', '--disable-setuid-sandbox'],
+        args=['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
         handleSIGINT=False, 
         handleSIGTERM=False, 
         handleSIGHUP=False
     )
+    
     page = await browser.newPage()
     
     try:
