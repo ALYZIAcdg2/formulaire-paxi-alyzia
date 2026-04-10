@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QSE-FO-320 V02 - Passagers Perturbateurs</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+</head>
+<body>
+
+    <div id="document-to-print" class="container">
+        <header class="main-header">
+            <div class="logo-box">
+                <img src="logo_alyzia.png" alt="Logo Alyzia">
+            </div>
+            <div class="title-box">
+                <h1>FORMULAIRE</h1>
+                <h2>Passagers Perturbateurs</h2>
+            </div>
+        </header>
+
+        <div class="form-block">
+            <div class="block-header">Informations du passager :</div>
+            <div class="block-content">
+                <table class="info-table">
+                    <tr>
+                        <td colspan="2"><strong>NOM, Prénom du passager :</strong> <input type="text" id="nom_passager" class="input-line" required></td>
+                        <td class="text-right"><strong>SEXE :</strong> 
+                            <input type="radio" name="sexe" id="sm"> <label for="sm">M</label> 
+                            <input type="radio" name="sexe" id="sf"> <label for="sf">F</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>DATE :</strong> <input type="date" class="date-picker"></td>
+                        <td><strong>HEURE DE L’INCIDENT :</strong> <input type="time" class="time-picker"></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3"><strong>N° vol / destination :</strong> <input type="text" class="input-line w-80"></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="form-block">
+            <div class="block-header">Lieu de l’incident :</div>
+            <div class="grid-2 padding-10">
+                <div class="col">
+                    <label class="check-box"><input type="checkbox"> Comptoir Ventes</label>
+                    <label class="check-box"><input type="checkbox"> Comptoir enregistrement</label>
+                    <label class="check-box"><input type="checkbox"> Comptoir embarquement</label>
+                </div>
+                <div class="col desktop-offset">
+                    <label class="check-box"><input type="checkbox"> Comptoir Service Bagages</label>
+                    <label class="check-box"><input type="checkbox"> Autre lieu : <input type="text" class="input-line"></label>
+                    <label class="check-box">→ Préciser le hall / terminal : <input type="text" class="input-line"></label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-block">
+            <div class="block-header">Nature de l’incident :</div>
+            <div class="grid-2 padding-10">
+                <div class="col">
+                    <label class="check-box"><input type="checkbox"> Agression verbale</label>
+                    <label class="check-box"><input type="checkbox"> Agression physique</label>
+                    <label class="check-box"><input type="checkbox"> Dégradation matérielle</label>
+                </div>
+                <div class="col desktop-offset">
+                    <label class="check-box"><input type="checkbox"> Refus de se conformer aux règles</label>
+                    <label class="check-box">Autres : <input type="text" class="input-line"></label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-block">
+            <div class="block-header">Cause de l’incident :</div>
+            <table class="split-table">
+                <tr>
+                    <td class="w-50 border-right padding-10">
+                        <label class="check-box"><input type="checkbox"> Installations / infrastructures</label>
+                        <label class="check-box"><input type="checkbox"> Retard avion / annulation du vol</label>
+                        <label class="check-box"><input type="checkbox"> Bagages (acceptation, tarifs…)</label>
+                        <label class="check-box"><input type="checkbox"> Autres : <input type="text" class="input-line"></label>
+                    </td>
+                    <td class="w-50 v-top padding-10">
+                        <strong>→ Description de l’incident :</strong>
+                        <textarea class="desc-area"></textarea>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="form-block">
+            <div class="block-header">Mesures prises :</div>
+            <div class="grid-2 padding-10">
+                <div class="col">
+                    <label class="check-box"><input type="checkbox"> Refus d’embarquement (autorités/Cie)</label>
+                    <label class="check-box"><input type="checkbox"> Débarquement (autorités/Cie)</label>
+                    <label class="check-box"><input type="checkbox"> Demande d’intervention autorités</label>
+                </div>
+                <div class="col desktop-offset">
+                    <label class="check-box">Autres : <input type="text" class="input-line"></label>
+                </div>
+            </div>
+        </div>
+
+        <div class="plainte-bar">
+            <strong>Référence dépôt de plainte ou main courante :</strong> <input type="text" class="input-line flex-grow">
+        </div>
+
+        <table class="signature-table">
+            <thead>
+                <tr>
+                    <th class="sub-title-sig">Nom, prénom de l’agent :</th>
+                    <th class="sub-title-sig">Nom, prénom du superviseur :</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="sig-zone"><div class="sig-content" contenteditable="true"></div></td>
+                    <td class="sig-zone"><div class="sig-content" contenteditable="true"></div></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="encadrement">
+            <div class="fiche-box">
+                <strong>Fiche n° :</strong><br>
+                <input type="text" id="num_fiche" class="input-line w-100">
+            </div>
+            <div class="encadrement-content">
+                <div class="blue-title">A remplir par l’encadrement / Service QSE / Sûreté :</div>
+                <label class="check-box"><input type="checkbox"> <span class="level-text">Level 1</span> – Comportement perturbateur – risque faible</label>
+                <label class="check-box"><input type="checkbox"> <span class="level-text">Level 2</span> – Comportement agressif – risque modéré</label>
+                <label class="check-box"><input type="checkbox"> <span class="level-text">Level 3</span> – Comportement de mise en danger – risque sévère</label>
+            </div>
+        </div>
+
+        <footer class="legal-notice-box">
+            <div class="legal-text">
+                Le présent document est la propriété du Groupe Alyzia. Il ne peut être reproduit, communiqué, ou confié à des personnes externes,
+            sans l’autorisation du service QSE. Les entités intervenant dans le domaine de la sécurité doivent répondre à l’article L612-14 du
+            Code de la Sécurité Intérieure : L'autorisation d'exercice ne confère aucune prérogative de puissance publique à l'entreprise ou aux
+            personnes qui en bénéficient.
+            </div>
+            <div class="legal-info">
+                QSE-FO-320 V02<br>31/03/2026<br>
+            </div>
+        </footer>
+    </div>
+
+<div class="btn-area no-print">
+    <button onclick="actionFormulaire('download')" class="btn pdf">ENREGISTRER PDF</button>
+    <button onclick="actionFormulaire('email')" class="btn envoyer">ENVOYER EMAIL</button>
+</div>
+
+<script>
+(function(){
+    emailjs.init("lAMYieh5BWaEzFYPO");
+})();
+</script>
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+fastapi
+uvicorn
+pydantic
+pyppeteer
+python-multipart
