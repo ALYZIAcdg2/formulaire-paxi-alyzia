@@ -21,7 +21,7 @@ async function actionFormulaire(typeAction) {
 
     try {
         // 2. Envoi au serveur avec l'action spécifiée (email ou download)
-        const response = await fetch(`/submit?action=${typeAction}`, {
+const response = await fetch(`/submit?action=${typeAction}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(formData)
