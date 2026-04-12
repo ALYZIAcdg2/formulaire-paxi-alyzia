@@ -92,10 +92,17 @@ def envoyer_email(fichier, nom):
     with open(fichier, "rb") as f:
         msg.add_attachment(f.read(), maintype="application", subtype="pdf", filename=fichier)
 
-    # Utilisation du port 465 (SSL) pour Gmail
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
-        smtp.login(USER, PASS)
-        smtp.send_message(msg)
+# Remplacez toute la partie de connexion SMTP par celle-ci :
+    try:
+        # Utilisation du port 587 (TLS) au lieu de 465
+        with smtplib.SMTP("smtp.gmail.com", 587) as smtp:
+            smtp.starttls()  # Sécurise la connexion
+            smtp.login(USER, PASS)
+            smtp.send_message(msg)
+            print("Email envoyé avec succès !")
+    except Exception as e:
+        print(f"Erreur SMTP spécifique : {e}")
+        raise e
 
 # --- ROUTE ---
 @app.post("/submit")
