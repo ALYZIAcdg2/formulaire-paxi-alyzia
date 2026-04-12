@@ -1,6 +1,7 @@
 import os
 import smtplib
 import asyncio
+import httpx
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
@@ -78,40 +79,53 @@ async def generer_pdf_chrome(data: IncidentReport):
     return fichier
 
 # --- ENVOI EMAIL ---
-def envoyer_email(fichier, nom):
-    # On récupère les infos de manière sécurisée
-    USER = os.getenv("EMAIL_USER", "alyzia.cdg2@gmail.com")
-    PASS = os.getenv("EMAIL_PASS") # On le règlera sur Render
-    
-    msg = EmailMessage()
-    msg["Subject"] = f"FORMULAIRE PAXI - {nom.upper()}"
-    msg["From"] = f"PAXI SYSTEM <{USER}>"
-    msg["To"] = "xavier.oliere@alyzia.com"
-    msg.set_content(f"Rapport d'incident : {nom}")
+async def envoyer_email(fichier, nom):
+    # La clé API sera stockée sur Render
+    API_KEY = os.getenv("SENDGRID_API_KEY")
+    SENDER_EMAIL = "alyzia.cdg2@gmail.com"
+    RECEIVER_EMAIL = "xavier.oliere@alyzia.com"
 
+    # Encodage du PDF en Base64 pour l'envoi API
+    import base64
     with open(fichier, "rb") as f:
-        msg.add_attachment(f.read(), maintype="application", subtype="pdf", filename=fichier)
+        encoded_pdf = base64.b64encode(f.read()).decode()
 
-# Remplacez toute la partie de connexion SMTP par celle-ci :
-    try:
-        # Utilisation du port 587 (TLS) au lieu de 465
-        with smtplib.SMTP("smtp.gmail.com", 587) as smtp:
-            smtp.starttls()  # Sécurise la connexion
-            smtp.login(USER, PASS)
-            smtp.send_message(msg)
-            print("Email envoyé avec succès !")
-    except Exception as e:
-        print(f"Erreur SMTP spécifique : {e}")
-        raise e
+    data = {
+        "personalizations": [{"to": [{"email": RECEIVER_EMAIL}]}],
+        "from": {"email": SENDER_EMAIL, "name": "PAXI SYSTEM"},
+        "subject": f"FORMULAIRE PAXI - {nom.upper()}",
+        "content": [{"type": "text/plain", "value": f"Rapport d'incident : {nom}"}],
+        "attachments": [
+            {
+                "content": encoded_pdf,
+                "filename": fichier,
+                "type": "application/pdf",
+                "disposition": "attachment"
+            }
+        ]
+    }
+
+    headers = {
+        "Authorization": f"Bearer {API_KEY}",
+        "Content-Type": "application/json"
+    }
+
+    async with httpx.AsyncClient() as client:
+        response = await client.post("https://api.sendgrid.com/v3/mail/send", json=data, headers=headers)
+        if response.status_code >= 400:
+            print(f"Erreur API SendGrid: {response.text}")
+            raise Exception("Erreur lors de l'envoi du mail via API")
 
 # --- ROUTE ---
 @app.post("/submit")
 async def submit(report: IncidentReport, action: str = Query("email")):
     try:
+        # 1. On génère toujours le PDF en premier
         fichier_path = await generer_pdf_chrome(report)
         
         if action == "email":
-            envoyer_email(fichier_path, report.nom_passager)
+            # 2. AJOUT DU "await" ICI (indispensable pour la Solution 1)
+            await envoyer_email(fichier_path, report.nom_passager)
             return {"status": "ok"}
         else:
             return FileResponse(
@@ -120,6 +134,7 @@ async def submit(report: IncidentReport, action: str = Query("email")):
                 media_type='application/pdf'
             )
     except Exception as e:
+        # En cas d'erreur, on l'affiche dans les Logs de Render
         print(f"ERREUR SERVEUR : {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
