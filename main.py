@@ -79,8 +79,10 @@ async def generer_pdf_chrome(data: IncidentReport):
 
 # --- ENVOI EMAIL ---
 def envoyer_email(fichier, nom):
-    USER = "alyzia.cdg2@gmail.com"
-    PASS = "onwg mflm abpl uuzb"
+    # On récupère les infos de manière sécurisée
+    USER = os.getenv("EMAIL_USER", "alyzia.cdg2@gmail.com")
+    PASS = os.getenv("EMAIL_PASS") # On le règlera sur Render
+    
     msg = EmailMessage()
     msg["Subject"] = f"FORMULAIRE PAXI - {nom.upper()}"
     msg["From"] = f"PAXI SYSTEM <{USER}>"
@@ -90,6 +92,7 @@ def envoyer_email(fichier, nom):
     with open(fichier, "rb") as f:
         msg.add_attachment(f.read(), maintype="application", subtype="pdf", filename=fichier)
 
+    # Utilisation du port 465 (SSL) pour Gmail
     with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
         smtp.login(USER, PASS)
         smtp.send_message(msg)
