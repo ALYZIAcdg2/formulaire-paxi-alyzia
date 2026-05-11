@@ -83,7 +83,7 @@ async def envoyer_email(fichier, nom):
     # La clé API sera stockée sur Render
     API_KEY = os.getenv("SENDGRID_API_KEY")
     SENDER_EMAIL = "alyzia.cdg2@gmail.com"
-    RECEIVER_EMAIL = "estelle.inglese@alyzia.com"
+    RECEIVER_EMAIL = "estelle.inglese@alyzia.com", "lyddia.apharel@alyzia.com
 
     # Encodage du PDF en Base64 pour l'envoi API
     import base64
